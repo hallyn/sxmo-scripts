@@ -5,8 +5,8 @@
 # /bin/sh because bash isn't on the thing by default.
 
 # Replace with the location of your inboxes, space separated
-BOXES="${HOME}/ciscomail/INBOX ${HOME}/gmail/INBOX"
-SLEEP=20
+BOXES="${HOME}/mail/INBOX"
+SLEEP=3m
 
 # Initialize
 MAILCACHE="${HOME}/.cache/maildup"
@@ -85,6 +85,6 @@ while : ; do
         [ -s "${MAILCACHE}/${count}/summary" ] && newmails=1
         count=$((count+1))
     done
-    [ ${newmails} -ne 0 ] &&  ${HOME}/bin/newmail-claxon
+    [ ${newmails} -ne 0 ] &&  ${HOME}/bin/newmail-claxon.sh
     sleep "${SLEEP}"
 done
