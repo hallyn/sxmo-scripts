@@ -1,10 +1,10 @@
 #!/bin/sh
 
-SLEEP=3m
+SLEEP=1m
 
-#if ! pidof -q trackmdirmail.sh; then
-    #trackmdirmail.sh &
-#fi
+if ! pidof -q trackmdirmail.sh; then
+    ${HOME}/.config/sxmo/userscripts/trackmdirmail.sh &
+fi
 
 while : ; do
     mbsync -a

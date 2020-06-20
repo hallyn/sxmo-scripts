@@ -5,8 +5,8 @@
 # /bin/sh because bash isn't on the thing by default.
 
 # Replace with the location of your inboxes, space separated
-BOXES="${HOME}/mail/INBOX"
-SLEEP=3m
+BOXES="${HOME}/mail/INBOX ${HOME}/mail/unread"
+SLEEP=1m
 
 # Initialize
 MAILCACHE="${HOME}/.cache/maildup"
