@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# This is intended as a rtcwake hook.  It checks for new telegram messages
+# and will do a ring if found.
+
+ACCOUNTS="mail Notify"
+new=0
+#now=$(date -d now +%s)
+lastcheck=$(stat -c "%Z" ~/tg-new)
+for A in $ACCOUNTS; do
+    telegram-cli -W -e "history $A" | awk '/^ [0-9][0-9]:[0-9][0-9]/ { print $1 }' | tr -d '[]' | while read line; do
+        msgtime=$(date -d $line +%s)
+        #if [ $msgtime -ge $now ]; then
+        if [ $msgtime -ge $lastcheck ]; then
+            new=$((new + 1))
+        fi
+    done
+done
+
+echo $new > ~/tg-new
+if [ $new -gt 0 ]; then
+    notify-send "$new new messages"
+    if [ -x "$XDG_CONFIG_HOME/sxmo/hooks/ring" ]; then
+        $XDG_CONFIG_HOME/sxmo/hooks/ring
+    fi
+    exit 1
+fi
