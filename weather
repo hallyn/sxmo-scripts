@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# shellcheck disable=SC1091
+[ -f /usr/bin/sxmo_common.sh ] && . /usr/bin/sxmo_common.sh
+TERMMODE=$([ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ] && echo "true")
+menu() {
+	if [ "$TERMMODE" != "true" ]; then
+		"$@"
+	else
+		if [ -n "$LINES" -a $LINES -gt 10 ]; then
+			lines=$((LINES - 5))
+		else
+			lines=10
+		fi
+		vis-menu -i -l $lines
+	fi
+}
+
+termshow() {
+	if [ "$TERMMODE" != "true" ]; then
+		st -f Terminus-8 -e "$@"
+	else
+		"$@"
+	fi
+}
+
+GPSFILE=${GPSFILE:-~/.config/gps}
+prompt() {
+	menu dmenu -i -fn Terminus-20 -c -l 15 "$@"
+}
+
+locations=$(awk -F, '{ print $1 }' $GPSFILE)
+choice=$(printf %b "Close\n$locations" | prompt)
+if [ "$choice" = "Close" ]; then
+	exit 0
+fi
+
+set -- $(awk "/^${choice}/ { print \$(NF-1) \" \" \$NF }" $GPSFILE)
+
+curl "https://wttr.in/$1,$2?T&u&n" > /tmp/weather
+termshow less /tmp/weather
